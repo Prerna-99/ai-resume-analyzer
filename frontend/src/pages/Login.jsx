@@ -6,17 +6,39 @@ function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("login button clicked");
-    console.log(email);
-    console.log(password);
+
     if (password.length < 8) {
       alert("password must be at least 8 characters");
       return;
     }
-    localStorage.setItem("isLoggedIn","true");
-    navigate("/dashboard");
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("Login successful !")
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/dashboard");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Unable to connect to server");
+    }
 
   };
   return (
@@ -83,7 +105,7 @@ function Login() {
 
           </div>
           <button
-            tupe="submit"
+            type="submit"
             className="mt-8 w-full rounded-xl bg-gradient-to-r from-green-600 to-pink-600 py-3 text-lg font-semibold text-white shadow-lg shadow-green-600/30 transition-all duration-300 hover:scale-105 hover:shadow-pink-500/50">
             Login
           </button>

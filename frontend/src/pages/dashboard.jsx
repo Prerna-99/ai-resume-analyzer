@@ -16,10 +16,11 @@ function Dashboard() {
 
     const formdata = new FormData();
     formdata.append("resume", selectedFile);
-  
+    
   const response = await axios.post(
-    "http://127.0.0.1:5000/predict",
-    formdata
+    "http://localhost:5000/predict",
+    formdata,
+    {withCredentials: true}
   );
   console.log(response.data);
 };
@@ -33,16 +34,13 @@ function Dashboard() {
       </p>
 
       <button
-        onClick={() => {
-          if (!isLoggedIn) {
-            navigate("/login");
-          } else {
-            document
-              .getElementById("upload-section")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }
-        }}
-        onClick={() => setShowUpload(true)}
+      onClick={() => {
+        if (!isLoggedIn) {
+          navigate("/login");
+        } else {
+          setShowUpload(!showUpload);
+        }
+      }}
         className="mt-10 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-pink-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-600/30 transition-all duration-300 hover:scale-105 hover:shadow-violet-500/50">
         <Upload size={22} />
         UPLOAD RESUME
